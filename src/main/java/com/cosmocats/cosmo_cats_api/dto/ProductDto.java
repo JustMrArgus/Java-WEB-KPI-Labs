@@ -1,5 +1,6 @@
 package com.cosmocats.cosmo_cats_api.dto;
 
+import com.cosmocats.cosmo_cats_api.validation.CosmicWordCheck;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ public class ProductDto {
     private Long id;
 
     @NotBlank(message = "Name cannot be empty")
+    @CosmicWordCheck
     private String name;
 
     @Size(min = 5, max = 255, message = "Description must be between 5 and 255 characters")
