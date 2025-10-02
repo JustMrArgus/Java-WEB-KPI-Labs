@@ -5,6 +5,7 @@ import com.cosmocats.cosmo_cats_api.domain.Product;
 import com.cosmocats.cosmo_cats_api.mapper.ProductMapper;
 import com.cosmocats.cosmo_cats_api.service.ProductService;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class ProductController {
 
     @PostMapping("/api/products")
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductDto create(@RequestBody ProductDto dto) {
+    public ProductDto create(@Valid @RequestBody ProductDto dto) {
         Product product = productMapper.toProductEntity(dto);
         return productMapper.toProductDto(productService.createProduct(product));
     }
@@ -44,7 +45,7 @@ public class ProductController {
     }
 
     @PutMapping("/api/products/{id}")
-    public ProductDto update(@PathVariable Long id, @RequestBody ProductDto dto) {
+    public ProductDto update(@PathVariable Long id, @Valid @RequestBody ProductDto dto) {
         Product product = productMapper.toProductEntity(dto);
         return productMapper.toProductDto(productService.updateProduct(id, product));
     }
