@@ -1,4 +1,4 @@
-package com.cosmocats.dto;
+package com.cosmocats.cosmo_cats_api.dto;
 
 import lombok.Data;
 

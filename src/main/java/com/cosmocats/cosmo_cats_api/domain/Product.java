@@ -1,9 +1,13 @@
-package com.cosmocats.dto;
+package com.cosmocats.cosmo_cats_api.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class ProductDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Product {
     private Long id;
     private String name;
     private String description;

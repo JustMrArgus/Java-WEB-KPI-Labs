@@ -1,9 +1,9 @@
-package com.cosmocats.mapper;
+package com.cosmocats.cosmo_cats_api.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import com.cosmocats.domain.Cart;
-import com.cosmocats.dto.CartDto;
+import com.cosmocats.cosmo_cats_api.domain.Cart;
+import com.cosmocats.cosmo_cats_api.dto.CartDto;
 
 @Mapper(componentModel = "spring")
 public interface CartMapper {

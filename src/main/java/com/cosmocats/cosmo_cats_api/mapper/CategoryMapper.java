@@ -1,9 +1,9 @@
-package com.cosmocats.mapper;
+package com.cosmocats.cosmo_cats_api.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import com.cosmocats.domain.Category;
-import com.cosmocats.dto.CategoryDto;
+import com.cosmocats.cosmo_cats_api.domain.Category;
+import com.cosmocats.cosmo_cats_api.dto.CategoryDto;
 
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {

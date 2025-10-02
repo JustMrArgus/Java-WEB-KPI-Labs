@@ -1,4 +1,4 @@
-package com.cosmocats.domain;
+package com.cosmocats.cosmo_cats_api.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
