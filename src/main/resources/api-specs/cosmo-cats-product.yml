@@ -96,12 +96,6 @@ paths:
       responses:
         "204":
           description: Deleted
-        "404":
-          description: Not found
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
 
 components:
   schemas:
