@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  wiremock:
+    image: wiremock/wiremock:3.5.2
+    ports:
+      - "9090:8080"
+    volumes:
+      - ./docker/wiremock/mappings:/home/wiremock/mappings
+    command: ["--verbose"]
