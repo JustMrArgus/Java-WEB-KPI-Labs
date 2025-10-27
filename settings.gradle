@@ -12,4 +12,3 @@ plugins {
 }
 
 rootProject.name = 'Java-WEB-KPI-Labs'
-include('app')
