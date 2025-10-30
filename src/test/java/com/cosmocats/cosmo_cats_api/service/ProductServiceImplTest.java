@@ -1,19 +1,18 @@
 package com.cosmocats.cosmo_cats_api.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.cosmocats.cosmo_cats_api.domain.Product;
 import com.cosmocats.cosmo_cats_api.exception.ProductNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+@DisplayName("Product Service Tests")
+public class ProductServiceImplTest {
 
-class ProductServiceImplTest {
-
-    private ProductService productService;
+    private ProductServiceImpl productService;
 
     private Product createDummyProduct(String name) {
         return new Product(null, name, "Test Description", 100.0, "USD", "SKU-123", 1L);
@@ -95,8 +94,8 @@ class ProductServiceImplTest {
         Long nonExistentId = 99L;
         Product updatedProductDetails = createDummyProduct("New Name");
         ProductNotFoundException exception = assertThrows(
-            ProductNotFoundException.class,
-            () -> productService.updateProduct(nonExistentId, updatedProductDetails)
+                ProductNotFoundException.class,
+                () -> productService.updateProduct(nonExistentId, updatedProductDetails)
         );
         assertEquals("Product not found with id: 99", exception.getMessage());
     }
