@@ -6,10 +6,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.cosmocats.cosmo_cats_api.config.MappersTestConfiguration;
 import com.cosmocats.cosmo_cats_api.domain.Product;
 import com.cosmocats.cosmo_cats_api.dto.ProductDto;
-import com.cosmocats.cosmo_cats_api.exception.GlobalExceptionHandler;
 import com.cosmocats.cosmo_cats_api.exception.ProductNotFoundException;
 import com.cosmocats.cosmo_cats_api.mapper.ProductMapper;
 import com.cosmocats.cosmo_cats_api.service.ProductService;
@@ -23,15 +21,13 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(ProductController.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-@Import({MappersTestConfiguration.class, GlobalExceptionHandler.class})
 @DisplayName("Product Controller Integration Tests")
 @Tag("product-controller")
 class ProductControllerIT {
