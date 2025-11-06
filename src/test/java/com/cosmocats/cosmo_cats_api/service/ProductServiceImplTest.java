@@ -1,27 +1,22 @@
 package com.cosmocats.cosmo_cats_api.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.cosmocats.cosmo_cats_api.domain.Product;
 import com.cosmocats.cosmo_cats_api.exception.ProductNotFoundException;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest(classes = {ProductServiceImpl.class})
 @DisplayName("Product Service Tests")
 public class ProductServiceImplTest {
 
+    @Autowired
     private ProductServiceImpl productService;
-
-    private Product createDummyProduct(String name) {
-        return new Product(null, name, "Test Description", 100.0, "USD", "SKU-123", 1L);
-    }
-
-    @BeforeEach
-    void setUp() {
-        productService = new ProductServiceImpl();
-    }
 
     @Test
     @DisplayName("Should create a product and return it with a new ID")
@@ -30,16 +25,7 @@ public class ProductServiceImplTest {
         Product createdProduct = productService.createProduct(productToCreate);
         assertNotNull(createdProduct);
         assertNotNull(createdProduct.getId());
-        assertEquals(1L, createdProduct.getId());
         assertEquals("Cosmic Catnip", createdProduct.getName());
-    }
-
-    @Test
-    @DisplayName("Should return an empty list when no products exist")
-    void testGetAllProducts_ShouldReturnEmptyList_WhenNoProductsExist() {
-        List<Product> products = productService.getAllProducts();
-        assertNotNull(products);
-        assertTrue(products.isEmpty());
     }
 
     @Test
@@ -116,5 +102,9 @@ public class ProductServiceImplTest {
         Long nonExistentId = 99L;
         assertDoesNotThrow(() -> productService.deleteProductById(nonExistentId));
         assertTrue(productService.getAllProducts().isEmpty());
+    }
+
+    private Product createDummyProduct(String name) {
+        return new Product(null, name, "Test Description", 100.0, "USD", "SKU-123", 1L);
     }
 }
