@@ -78,4 +78,17 @@ public class GlobalExceptionHandler {
                 .contentType(MediaType.valueOf("application/problem+json"))
                 .body(problem);
     }
+
+    @ExceptionHandler(FeatureNotAvailableException.class)
+    public ResponseEntity<ProblemDetail> handleFeatureNotAvailable(FeatureNotAvailableException ex, HttpServletRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problem.setType(URI.create("https://cosmocats.example.com/problems/feature-not-available"));
+        problem.setTitle("Feature Not Available");
+        problem.setDetail(ex.getMessage());
+        problem.setInstance(URI.create(request.getRequestURI()));
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.valueOf("application/problem+json"))
+                .body(problem);
+    }
 }
