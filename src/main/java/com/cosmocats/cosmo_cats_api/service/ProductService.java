@@ -1,6 +1,7 @@
 package com.cosmocats.cosmo_cats_api.service;
 
 import com.cosmocats.cosmo_cats_api.domain.Product;
+import com.cosmocats.cosmo_cats_api.repository.projection.ProductSalesProjection;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,4 +17,6 @@ public interface ProductService {
     Product updateProduct(Long id, Product updatedProduct);
 
     void deleteProductById(Long id);
+
+    List<ProductSalesProjection> getTopSellingProducts(int limit);
 }

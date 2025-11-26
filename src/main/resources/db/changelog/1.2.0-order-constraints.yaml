@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 7-add-order-constraints
+      author: rodina-lev
+      changes:
+        - addUniqueConstraint:
+            tableName: orders
+            columnNames: order_number
+            constraintName: uq_orders_order_number
+        - addUniqueConstraint:
+            tableName: orders
+            columnNames: customer_email
+            constraintName: uq_orders_customer_email
+        - createIndex:
+            tableName: orders
+            indexName: idx_orders_created_at
+            columns:
+              - column:
+                  name: created_at

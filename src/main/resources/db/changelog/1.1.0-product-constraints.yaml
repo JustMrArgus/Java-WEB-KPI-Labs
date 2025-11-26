@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 6-add-product-constraints
+      author: rodina-lev
+      changes:
+        - addUniqueConstraint:
+            tableName: products
+            columnNames: category_id, product_name
+            constraintName: uq_products_category_name
+        - addUniqueConstraint:
+            tableName: products
+            columnNames: sku
+            constraintName: uq_products_sku
+        - createIndex:
+            tableName: products
+            indexName: idx_products_name
+            columns:
+              - column:
+                  name: product_name

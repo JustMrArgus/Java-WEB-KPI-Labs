@@ -1,7 +1,8 @@
 package com.cosmocats.cosmo_cats_api.controller;
 
-import com.cosmocats.cosmo_cats_api.dto.ProductDto;
 import com.cosmocats.cosmo_cats_api.domain.Product;
+import com.cosmocats.cosmo_cats_api.dto.ProductDto;
+import com.cosmocats.cosmo_cats_api.dto.ProductSalesReportDto;
 import com.cosmocats.cosmo_cats_api.exception.ProductNotFoundException;
 import com.cosmocats.cosmo_cats_api.mapper.ProductMapper;
 import com.cosmocats.cosmo_cats_api.service.ProductService;
@@ -52,5 +53,15 @@ public class ProductController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProductById(@PathVariable Long id) {
         productService.deleteProductById(id);
+    }
+
+    @GetMapping("/api/v1/products/top")
+    public List<ProductSalesReportDto> getTopSellingProducts(@RequestParam(defaultValue = "5") int limit) {
+        return productService.getTopSellingProducts(limit).stream()
+                .map(projection -> new ProductSalesReportDto(
+                        projection.getProductId(),
+                        projection.getProductName(),
+                        projection.getOrderCount()))
+                .toList();
     }
 }

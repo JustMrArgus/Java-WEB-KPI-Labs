@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -25,7 +26,7 @@ public class ProductDto {
 
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.1", message = "Price must be greater than 0")
-    private Double price;
+    private BigDecimal price;
 
     @NotBlank(message = "Currency cannot be empty")
     private String currency;
