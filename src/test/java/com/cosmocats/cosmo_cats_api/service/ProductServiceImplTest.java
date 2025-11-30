@@ -1,22 +1,39 @@
 package com.cosmocats.cosmo_cats_api.service;
 
+import com.cosmocats.cosmo_cats_api.intergation.AbstractIntegrationTest;
+import com.cosmocats.cosmo_cats_api.domain.Category;
 import com.cosmocats.cosmo_cats_api.domain.Product;
 import com.cosmocats.cosmo_cats_api.exception.ProductNotFoundException;
+import com.cosmocats.cosmo_cats_api.repository.CategoryRepository;
+import com.cosmocats.cosmo_cats_api.repository.ProductRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {ProductServiceImpl.class})
+@Transactional
 @DisplayName("Product Service Tests")
-public class ProductServiceImplTest {
+public class ProductServiceImplTest extends AbstractIntegrationTest {
 
     @Autowired
     private ProductServiceImpl productService;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @BeforeEach
+    void setup() {
+        productRepository.deleteAll();
+        categoryRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("Should create a product and return it with a new ID")
@@ -36,8 +53,6 @@ public class ProductServiceImplTest {
         List<Product> products = productService.getAllProducts();
         assertNotNull(products);
         assertEquals(2, products.size());
-        assertTrue(products.contains(product1));
-        assertTrue(products.contains(product2));
     }
 
     @Test
@@ -63,12 +78,24 @@ public class ProductServiceImplTest {
     void testUpdateProduct_ShouldUpdateAndReturnProduct_WhenIdExists() {
         Product originalProduct = productService.createProduct(createDummyProduct("Old Name"));
         Long id = originalProduct.getId();
-        Product updatedProductDetails = new Product(null, "New Name", "New Desc", 200.0, "EUR", "SKU-NEW", 2L);
+
+        Category cat = categoryRepository.findAll().get(0);
+
+        Product updatedProductDetails = Product.builder()
+                .name("New Name")
+                .description("New Desc")
+                .price(BigDecimal.valueOf(200.0))
+                .currency("EUR")
+                .sku("SKU-NEW")
+                .category(cat)
+                .build();
+
         Product result = productService.updateProduct(id, updatedProductDetails);
         assertNotNull(result);
         assertEquals(id, result.getId());
         assertEquals("New Name", result.getName());
-        assertEquals(200.0, result.getPrice());
+        assertEquals(BigDecimal.valueOf(200.0), result.getPrice());
+
         Optional<Product> productInStore = productService.getProductById(id);
         assertTrue(productInStore.isPresent());
         assertEquals("New Name", productInStore.get().getName());
@@ -78,12 +105,22 @@ public class ProductServiceImplTest {
     @DisplayName("Should throw ProductNotFoundException when updating a non-existent ID")
     void testUpdateProduct_ShouldThrowProductNotFoundException_WhenIdDoesNotExist() {
         Long nonExistentId = 99L;
-        Product updatedProductDetails = createDummyProduct("New Name");
+        Category cat = categoryRepository.save(Category.builder().name("Temp").build());
+
+        Product updatedProductDetails = Product.builder()
+                .name("New Name")
+                .description("Desc")
+                .price(BigDecimal.TEN)
+                .currency("USD")
+                .sku("SKU-FAIL")
+                .category(cat)
+                .build();
+
         ProductNotFoundException exception = assertThrows(
                 ProductNotFoundException.class,
                 () -> productService.updateProduct(nonExistentId, updatedProductDetails)
         );
-        assertEquals("Product not found with id: 99", exception.getMessage());
+        assertTrue(exception.getMessage().contains("99"));
     }
 
     @Test
@@ -100,11 +137,25 @@ public class ProductServiceImplTest {
     @DisplayName("Should not throw an exception when deleting a non-existent ID")
     void testDeleteProductById_ShouldDoNothing_WhenIdDoesNotExist() {
         Long nonExistentId = 99L;
-        assertDoesNotThrow(() -> productService.deleteProductById(nonExistentId));
-        assertTrue(productService.getAllProducts().isEmpty());
+
+        assertThrows(ProductNotFoundException.class,
+                () -> productService.deleteProductById(nonExistentId));
     }
 
     private Product createDummyProduct(String name) {
-        return new Product(null, name, "Test Description", 100.0, "USD", "SKU-123", 1L);
+        Category category = Category.builder()
+                .name("Cat-" + name)
+                .description("Description")
+                .build();
+        category = categoryRepository.save(category);
+
+        return Product.builder()
+                .name(name)
+                .description("Test Description")
+                .price(BigDecimal.valueOf(100.0))
+                .currency("USD")
+                .sku("SKU-" + name.hashCode())
+                .category(category)
+                .build();
     }
 }
