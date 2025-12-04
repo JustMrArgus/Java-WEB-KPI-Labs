@@ -1,6 +1,5 @@
 package com.cosmocats.cosmo_cats_api.domain;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -13,26 +12,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "categories",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uq_categories_name", columnNames = "name")
-        })
 public class Category {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_id_seq_gen")
-    @SequenceGenerator(name = "categories_id_seq_gen", sequenceName = "categories_id_seq", allocationSize = 1)
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(nullable = false, length = 120)
     private String name;
 
-    @Column(length = 512)
     private String description;
 
-        @Builder.Default
-        @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-        private List<Product> products = new ArrayList<>();
+    @Builder.Default
+    private List<Product> products = new ArrayList<>();
 }

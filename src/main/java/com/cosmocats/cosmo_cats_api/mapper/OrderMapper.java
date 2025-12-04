@@ -2,7 +2,8 @@ package com.cosmocats.cosmo_cats_api.mapper;
 
 import com.cosmocats.cosmo_cats_api.domain.Order;
 import com.cosmocats.cosmo_cats_api.domain.Product;
-import com.cosmocats.cosmo_cats_api.dto.OrderDto;
+import com.cosmocats.cosmo_cats_api.dto.OrderRequestDto;
+import com.cosmocats.cosmo_cats_api.dto.OrderResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -13,10 +14,13 @@ import java.util.Set;
 public interface OrderMapper {
 
     @Mapping(target = "productIds", expression = "java(toProductIds(order.getProducts()))")
-    OrderDto toOrderDto(Order order);
+    OrderResponseDto toResponseDto(Order order);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "orderNumber", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "products", ignore = true)
-    Order toOrderEntity(OrderDto dto);
+    Order toDomain(OrderRequestDto requestDto);
 
     default List<Long> toProductIds(Set<Product> products) {
         return products == null
@@ -25,5 +29,4 @@ public interface OrderMapper {
                 .map(Product::getId)
                 .toList();
     }
-
 }

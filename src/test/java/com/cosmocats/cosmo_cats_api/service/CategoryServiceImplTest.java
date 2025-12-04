@@ -24,11 +24,6 @@ class CategoryServiceImplTest extends AbstractIntegrationTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @BeforeEach
-    void setUp() {
-        categoryRepository.deleteAll();
-    }
-
     @Test
     @DisplayName("Should create category")
     void shouldCreateCategory() {

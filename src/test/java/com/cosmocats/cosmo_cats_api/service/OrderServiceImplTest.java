@@ -4,6 +4,8 @@ import com.cosmocats.cosmo_cats_api.intergation.AbstractIntegrationTest;
 import com.cosmocats.cosmo_cats_api.domain.Category;
 import com.cosmocats.cosmo_cats_api.domain.Order;
 import com.cosmocats.cosmo_cats_api.domain.Product;
+import com.cosmocats.cosmo_cats_api.entity.CategoryEntity;
+import com.cosmocats.cosmo_cats_api.entity.ProductEntity;
 import com.cosmocats.cosmo_cats_api.exception.OrderNotFoundException;
 import com.cosmocats.cosmo_cats_api.exception.ProductNotFoundException;
 import com.cosmocats.cosmo_cats_api.repository.CategoryRepository;
@@ -36,40 +38,23 @@ class OrderServiceImplTest extends AbstractIntegrationTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    private Product savedProduct1;
-    private Product savedProduct2;
-
-    @BeforeEach
-    void setUp() {
-        orderRepository.deleteAll();
-        productRepository.deleteAll();
-        categoryRepository.deleteAll();
-
-        Category category = categoryRepository.save(
-                Category.builder()
-                        .name("Test star Category")
+    private CategoryEntity createTestCategory(String name) {
+        return categoryRepository.save(
+                CategoryEntity.builder()
+                        .name(name)
                         .description("Test Description")
                         .build()
         );
+    }
 
-        savedProduct1 = productRepository.save(
-                Product.builder()
-                        .name("Cosmic star Toy 1")
+    private ProductEntity createTestProduct(String name, String sku, CategoryEntity category) {
+        return productRepository.save(
+                ProductEntity.builder()
+                        .name(name)
                         .description("A cosmic toy")
                         .price(BigDecimal.valueOf(25.99))
                         .currency("USD")
-                        .sku("SKU-001")
-                        .category(category)
-                        .build()
-        );
-
-        savedProduct2 = productRepository.save(
-                Product.builder()
-                        .name("Cosmic star Toy 2")
-                        .description("Another cosmic toy")
-                        .price(BigDecimal.valueOf(35.99))
-                        .currency("USD")
-                        .sku("SKU-002")
+                        .sku(sku)
                         .category(category)
                         .build()
         );
@@ -78,12 +63,15 @@ class OrderServiceImplTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should create order with products")
     void shouldCreateOrderWithProducts() {
+        CategoryEntity category = createTestCategory("Test star Category 1");
+        ProductEntity savedProduct = createTestProduct("Cosmic star Toy 1", "SKU-001", category);
+
         Order order = Order.builder()
                 .customerEmail("cat@cosmos.com")
                 .status("NEW")
                 .build();
 
-        Order created = orderService.createOrder(order, List.of(savedProduct1.getId()));
+        Order created = orderService.createOrder(order, List.of(savedProduct.getId()));
 
         assertThat(created.getId()).isNotNull();
         assertThat(created.getOrderNumber()).isNotNull();
@@ -94,13 +82,16 @@ class OrderServiceImplTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should create order with provided order number")
     void shouldCreateOrderWithProvidedOrderNumber() {
+        CategoryEntity category = createTestCategory("Test star Category 2");
+        ProductEntity savedProduct = createTestProduct("Cosmic star Toy 2", "SKU-002", category);
+
         Order order = Order.builder()
                 .orderNumber("CUSTOM-ORDER-123")
                 .customerEmail("cat2@cosmos.com")
                 .status("NEW")
                 .build();
 
-        Order created = orderService.createOrder(order, List.of(savedProduct1.getId()));
+        Order created = orderService.createOrder(order, List.of(savedProduct.getId()));
 
         assertThat(created.getOrderNumber()).isEqualTo("CUSTOM-ORDER-123");
     }
@@ -108,6 +99,10 @@ class OrderServiceImplTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should create order with multiple products")
     void shouldCreateOrderWithMultipleProducts() {
+        CategoryEntity category = createTestCategory("Test star Category 3");
+        ProductEntity savedProduct1 = createTestProduct("Cosmic star Toy 3a", "SKU-003a", category);
+        ProductEntity savedProduct2 = createTestProduct("Cosmic star Toy 3b", "SKU-003b", category);
+
         Order order = Order.builder()
                 .customerEmail("cat3@cosmos.com")
                 .status("NEW")
@@ -158,6 +153,10 @@ class OrderServiceImplTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should get all orders")
     void shouldGetAllOrders() {
+        CategoryEntity category = createTestCategory("Test star Category 4");
+        ProductEntity savedProduct1 = createTestProduct("Cosmic star Toy 4a", "SKU-004a", category);
+        ProductEntity savedProduct2 = createTestProduct("Cosmic star Toy 4b", "SKU-004b", category);
+
         Order order1 = Order.builder()
                 .customerEmail("cat1@cosmos.com")
                 .status("NEW")
@@ -178,11 +177,14 @@ class OrderServiceImplTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should get order by id")
     void shouldGetOrderById() {
+        CategoryEntity category = createTestCategory("Test star Category 5");
+        ProductEntity savedProduct = createTestProduct("Cosmic star Toy 5", "SKU-005", category);
+
         Order order = Order.builder()
                 .customerEmail("cat@cosmos.com")
                 .status("NEW")
                 .build();
-        Order created = orderService.createOrder(order, List.of(savedProduct1.getId()));
+        Order created = orderService.createOrder(order, List.of(savedProduct.getId()));
 
         Optional<Order> found = orderService.getOrderById(created.getId());
 
@@ -201,12 +203,15 @@ class OrderServiceImplTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should get order by order number")
     void shouldGetOrderByOrderNumber() {
+        CategoryEntity category = createTestCategory("Test star Category 6");
+        ProductEntity savedProduct = createTestProduct("Cosmic star Toy 6", "SKU-006", category);
+
         Order order = Order.builder()
                 .orderNumber("TEST-ORDER-001")
                 .customerEmail("cat@cosmos.com")
                 .status("NEW")
                 .build();
-        orderService.createOrder(order, List.of(savedProduct1.getId()));
+        orderService.createOrder(order, List.of(savedProduct.getId()));
 
         Optional<Order> found = orderService.getOrderByOrderNumber("TEST-ORDER-001");
 
@@ -225,11 +230,14 @@ class OrderServiceImplTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should update order")
     void shouldUpdateOrder() {
+        CategoryEntity category = createTestCategory("Test star Category 7");
+        ProductEntity savedProduct = createTestProduct("Cosmic star Toy 7", "SKU-007", category);
+
         Order order = Order.builder()
                 .customerEmail("old@cosmos.com")
                 .status("NEW")
                 .build();
-        Order created = orderService.createOrder(order, List.of(savedProduct1.getId()));
+        Order created = orderService.createOrder(order, List.of(savedProduct.getId()));
 
         Order updateData = Order.builder()
                 .customerEmail("new@cosmos.com")
@@ -245,6 +253,10 @@ class OrderServiceImplTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should update order with new products")
     void shouldUpdateOrderWithNewProducts() {
+        CategoryEntity category = createTestCategory("Test star Category 8");
+        ProductEntity savedProduct1 = createTestProduct("Cosmic star Toy 8a", "SKU-008a", category);
+        ProductEntity savedProduct2 = createTestProduct("Cosmic star Toy 8b", "SKU-008b", category);
+
         Order order = Order.builder()
                 .customerEmail("cat@cosmos.com")
                 .status("NEW")
@@ -277,11 +289,14 @@ class OrderServiceImplTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should delete order")
     void shouldDeleteOrder() {
+        CategoryEntity category = createTestCategory("Test star Category 9");
+        ProductEntity savedProduct = createTestProduct("Cosmic star Toy 9", "SKU-009", category);
+
         Order order = Order.builder()
                 .customerEmail("cat@cosmos.com")
                 .status("NEW")
                 .build();
-        Order created = orderService.createOrder(order, List.of(savedProduct1.getId()));
+        Order created = orderService.createOrder(order, List.of(savedProduct.getId()));
 
         orderService.deleteOrder(created.getId());
 

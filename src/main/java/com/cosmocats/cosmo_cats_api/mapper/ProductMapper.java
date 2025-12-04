@@ -1,7 +1,8 @@
 package com.cosmocats.cosmo_cats_api.mapper;
 
 import com.cosmocats.cosmo_cats_api.domain.Product;
-import com.cosmocats.cosmo_cats_api.dto.ProductDto;
+import com.cosmocats.cosmo_cats_api.dto.ProductRequestDto;
+import com.cosmocats.cosmo_cats_api.dto.ProductResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -9,8 +10,9 @@ import org.mapstruct.Mapping;
 public interface ProductMapper {
 
     @Mapping(target = "categoryId", source = "category.id")
-    ProductDto toProductDto(Product product);
+    ProductResponseDto toResponseDto(Product product);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "category.id", source = "categoryId")
-    Product toProductEntity(ProductDto dto);
+    Product toDomain(ProductRequestDto requestDto);
 }

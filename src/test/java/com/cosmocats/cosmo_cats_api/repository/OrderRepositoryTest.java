@@ -1,7 +1,7 @@
 package com.cosmocats.cosmo_cats_api.repository;
 
 import com.cosmocats.cosmo_cats_api.intergation.AbstractIntegrationTest;
-import com.cosmocats.cosmo_cats_api.domain.Order;
+import com.cosmocats.cosmo_cats_api.entity.OrderEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ class OrderRepositoryTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should find order by Order Number")
     void shouldFindByOrderNumber() {
-        Order order = Order.builder()
+        OrderEntity order = OrderEntity.builder()
                 .orderNumber("ORD-999-XYZ")
                 .customerEmail("spacecat@mail.com")
                 .status("NEW")
@@ -28,7 +28,7 @@ class OrderRepositoryTest extends AbstractIntegrationTest {
 
         orderRepository.save(order);
 
-        Optional<Order> found = orderRepository.findByOrderNumber("ORD-999-XYZ");
+        Optional<OrderEntity> found = orderRepository.findByOrderNumber("ORD-999-XYZ");
 
         assertThat(found).isPresent();
         assertThat(found.get().getCustomerEmail()).isEqualTo("spacecat@mail.com");

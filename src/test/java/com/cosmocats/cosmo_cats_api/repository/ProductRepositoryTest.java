@@ -1,11 +1,10 @@
 package com.cosmocats.cosmo_cats_api.repository;
 
 import com.cosmocats.cosmo_cats_api.intergation.AbstractIntegrationTest;
-import com.cosmocats.cosmo_cats_api.domain.Category;
-import com.cosmocats.cosmo_cats_api.domain.Order;
-import com.cosmocats.cosmo_cats_api.domain.Product;
+import com.cosmocats.cosmo_cats_api.entity.CategoryEntity;
+import com.cosmocats.cosmo_cats_api.entity.OrderEntity;
+import com.cosmocats.cosmo_cats_api.entity.ProductEntity;
 import com.cosmocats.cosmo_cats_api.repository.projection.ProductSalesProjection;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,34 +28,29 @@ class ProductRepositoryTest extends AbstractIntegrationTest {
     @Autowired
     private OrderRepository orderRepository;
 
-    private Category savedCategory;
-
-    @BeforeEach
-    void setUp() {
-        orderRepository.deleteAll();
-        productRepository.deleteAll();
-        categoryRepository.deleteAll();
-
-        Category category = Category.builder()
-                .name("Cosmic Toys")
-                .description("Toys from outer space")
-                .build();
-        savedCategory = categoryRepository.save(category);
+    private CategoryEntity createTestCategory(String name) {
+        return categoryRepository.save(
+                CategoryEntity.builder()
+                        .name(name)
+                        .description("Toys from outer space")
+                        .build()
+        );
     }
 
     @Test
     @DisplayName("Should save and return product with ID")
     void shouldSaveProduct() {
-        Product product = Product.builder()
+        CategoryEntity category = createTestCategory("Cosmic Toys 1");
+        ProductEntity product = ProductEntity.builder()
                 .name("Moon star Laser")
                 .description("Pew Pew Laser")
                 .price(new BigDecimal("100.00"))
                 .currency("USD")
                 .sku("SKU-100")
-                .category(savedCategory)
+                .category(category)
                 .build();
 
-        Product saved = productRepository.save(product);
+        ProductEntity saved = productRepository.save(product);
 
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getName()).isEqualTo("Moon star Laser");
@@ -65,16 +59,17 @@ class ProductRepositoryTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should find product by SKU")
     void shouldFindProductBySku() {
-        Product product = Product.builder()
+        CategoryEntity category = createTestCategory("Cosmic Toys 2");
+        ProductEntity product = ProductEntity.builder()
                 .name("Mars star Ball")
                 .price(BigDecimal.TEN)
                 .currency("EUR")
                 .sku("SKU-MARS")
-                .category(savedCategory)
+                .category(category)
                 .build();
         productRepository.save(product);
 
-        Optional<Product> found = productRepository.findBySku("SKU-MARS");
+        Optional<ProductEntity> found = productRepository.findBySku("SKU-MARS");
 
         assertThat(found).isPresent();
         assertThat(found.get().getName()).isEqualTo("Mars star Ball");
@@ -83,13 +78,14 @@ class ProductRepositoryTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Should find top products by sales (Projection Test)")
     void shouldFindTopProductsByStatus() {
-        Product p1 = productRepository.save(Product.builder().name("Hit Product").price(BigDecimal.TEN).currency("USD").sku("P1").category(savedCategory).build());
-        Product p2 = productRepository.save(Product.builder().name("Low Product").price(BigDecimal.TEN).currency("USD").sku("P2").category(savedCategory).build());
+        CategoryEntity category = createTestCategory("Cosmic Toys 3");
+        ProductEntity p1 = productRepository.save(ProductEntity.builder().name("Hit Product").price(BigDecimal.TEN).currency("USD").sku("P1").category(category).build());
+        ProductEntity p2 = productRepository.save(ProductEntity.builder().name("Low Product").price(BigDecimal.TEN).currency("USD").sku("P2").category(category).build());
 
-        Order o1 = Order.builder().orderNumber("ORD-1").customerEmail("1@test.com").status("COMPLETED").build();
+        OrderEntity o1 = OrderEntity.builder().orderNumber("ORD-1").customerEmail("1@test.com").status("COMPLETED").build();
         o1.setProducts(Set.of(p1));
 
-        Order o2 = Order.builder().orderNumber("ORD-2").customerEmail("2@test.com").status("COMPLETED").build();
+        OrderEntity o2 = OrderEntity.builder().orderNumber("ORD-2").customerEmail("2@test.com").status("COMPLETED").build();
         o2.setProducts(Set.of(p1, p2));
 
         orderRepository.saveAll(List.of(o1, o2));

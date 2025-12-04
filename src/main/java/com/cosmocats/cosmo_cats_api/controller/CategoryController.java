@@ -1,7 +1,8 @@
 package com.cosmocats.cosmo_cats_api.controller;
 
 import com.cosmocats.cosmo_cats_api.domain.Category;
-import com.cosmocats.cosmo_cats_api.dto.CategoryDto;
+import com.cosmocats.cosmo_cats_api.dto.CategoryRequestDto;
+import com.cosmocats.cosmo_cats_api.dto.CategoryResponseDto;
 import com.cosmocats.cosmo_cats_api.exception.CategoryNotFoundException;
 import com.cosmocats.cosmo_cats_api.mapper.CategoryMapper;
 import com.cosmocats.cosmo_cats_api.service.CategoryService;
@@ -22,29 +23,29 @@ public class CategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto create(@Valid @RequestBody CategoryDto dto) {
-        Category category = categoryMapper.toCategoryEntity(dto);
-        return categoryMapper.toCategoryDto(categoryService.createCategory(category));
+    public CategoryResponseDto create(@Valid @RequestBody CategoryRequestDto requestDto) {
+        Category category = categoryMapper.toDomain(requestDto);
+        return categoryMapper.toResponseDto(categoryService.createCategory(category));
     }
 
     @GetMapping
-    public List<CategoryDto> findAll() {
+    public List<CategoryResponseDto> findAll() {
         return categoryService.getAllCategories().stream()
-                .map(categoryMapper::toCategoryDto)
+                .map(categoryMapper::toResponseDto)
                 .toList();
     }
 
     @GetMapping("/{id}")
-    public CategoryDto findById(@PathVariable Long id) {
+    public CategoryResponseDto findById(@PathVariable Long id) {
         return categoryService.getCategoryById(id)
-                .map(categoryMapper::toCategoryDto)
+                .map(categoryMapper::toResponseDto)
                 .orElseThrow(() -> new CategoryNotFoundException(id));
     }
 
     @PutMapping("/{id}")
-    public CategoryDto update(@PathVariable Long id, @Valid @RequestBody CategoryDto dto) {
-        Category category = categoryMapper.toCategoryEntity(dto);
-        return categoryMapper.toCategoryDto(categoryService.updateCategory(id, category));
+    public CategoryResponseDto update(@PathVariable Long id, @Valid @RequestBody CategoryRequestDto requestDto) {
+        Category category = categoryMapper.toDomain(requestDto);
+        return categoryMapper.toResponseDto(categoryService.updateCategory(id, category));
     }
 
     @DeleteMapping("/{id}")

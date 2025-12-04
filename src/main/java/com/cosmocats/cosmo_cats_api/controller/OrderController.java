@@ -1,7 +1,8 @@
 package com.cosmocats.cosmo_cats_api.controller;
 
 import com.cosmocats.cosmo_cats_api.domain.Order;
-import com.cosmocats.cosmo_cats_api.dto.OrderDto;
+import com.cosmocats.cosmo_cats_api.dto.OrderRequestDto;
+import com.cosmocats.cosmo_cats_api.dto.OrderResponseDto;
 import com.cosmocats.cosmo_cats_api.exception.OrderNotFoundException;
 import com.cosmocats.cosmo_cats_api.mapper.OrderMapper;
 import com.cosmocats.cosmo_cats_api.service.OrderService;
@@ -22,36 +23,36 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDto create(@Valid @RequestBody OrderDto dto) {
-        Order order = orderMapper.toOrderEntity(dto);
-        return orderMapper.toOrderDto(orderService.createOrder(order, dto.getProductIds()));
+    public OrderResponseDto create(@Valid @RequestBody OrderRequestDto requestDto) {
+        Order order = orderMapper.toDomain(requestDto);
+        return orderMapper.toResponseDto(orderService.createOrder(order, requestDto.getProductIds()));
     }
 
     @GetMapping
-    public List<OrderDto> readAll() {
+    public List<OrderResponseDto> readAll() {
         return orderService.getAllOrders().stream()
-                .map(orderMapper::toOrderDto)
+                .map(orderMapper::toResponseDto)
                 .toList();
     }
 
     @GetMapping("/{id}")
-    public OrderDto readById(@PathVariable Long id) {
+    public OrderResponseDto readById(@PathVariable Long id) {
         return orderService.getOrderById(id)
-                .map(orderMapper::toOrderDto)
+                .map(orderMapper::toResponseDto)
                 .orElseThrow(() -> new OrderNotFoundException(id));
     }
 
     @GetMapping("/number/{orderNumber}")
-    public OrderDto readByOrderNumber(@PathVariable String orderNumber) {
+    public OrderResponseDto readByOrderNumber(@PathVariable String orderNumber) {
         return orderService.getOrderByOrderNumber(orderNumber)
-                .map(orderMapper::toOrderDto)
+                .map(orderMapper::toResponseDto)
                 .orElseThrow(() -> new OrderNotFoundException(orderNumber));
     }
 
     @PutMapping("/{id}")
-    public OrderDto update(@PathVariable Long id, @Valid @RequestBody OrderDto dto) {
-        Order order = orderMapper.toOrderEntity(dto);
-        return orderMapper.toOrderDto(orderService.updateOrder(id, order, dto.getProductIds()));
+    public OrderResponseDto update(@PathVariable Long id, @Valid @RequestBody OrderRequestDto requestDto) {
+        Order order = orderMapper.toDomain(requestDto);
+        return orderMapper.toResponseDto(orderService.updateOrder(id, order, requestDto.getProductIds()));
     }
 
     @DeleteMapping("/{id}")

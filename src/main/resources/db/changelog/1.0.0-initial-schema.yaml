@@ -6,12 +6,15 @@ databaseChangeLog:
         - createSequence:
             sequenceName: categories_id_seq
             startValue: 1
+            incrementBy: 50
         - createSequence:
             sequenceName: products_id_seq
             startValue: 1
+            incrementBy: 50
         - createSequence:
             sequenceName: orders_id_seq
             startValue: 1
+            incrementBy: 50
 
   - changeSet:
       id: 2-create-categories-table

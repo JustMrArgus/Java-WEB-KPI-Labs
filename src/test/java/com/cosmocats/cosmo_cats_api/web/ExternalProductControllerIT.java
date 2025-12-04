@@ -5,13 +5,11 @@ import com.cosmocats.cosmo_cats_api.dto.ExternalProductDto;
 import com.cosmocats.cosmo_cats_api.service.ExternalProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,7 +18,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @DisplayName("External Product Controller Integration Tests")
 @Tag("external-product-service")
@@ -36,11 +33,6 @@ class ExternalProductControllerIT extends AbstractIntegrationTest {
 
     @MockitoBean
     private ExternalProductService externalProductService;
-
-    @BeforeEach
-    void setup() {
-        reset(externalProductService);
-    }
 
     @Test
     @SneakyThrows
