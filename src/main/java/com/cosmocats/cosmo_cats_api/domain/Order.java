@@ -1,18 +1,31 @@
 package com.cosmocats.cosmo_cats_api.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@ToString(exclude = "products")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Order {
+
+    @EqualsAndHashCode.Include
     private Long id;
+
+    private String orderNumber;
+
     private LocalDateTime createdAt;
+
     private String status;
-    private List<Long> productIds;
+
+    private String customerEmail;
+
+    @Builder.Default
+    private Set<Product> products = new HashSet<>();
 }

@@ -1,27 +1,28 @@
 package com.cosmocats.cosmo_cats_api.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class OrderDto {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrderResponseDto {
+
     private Long id;
+
     private String orderNumber;
+
     private LocalDateTime createdAt;
 
-    @NotBlank
     private String status;
 
-    @Email
-    @NotBlank
     private String customerEmail;
 
-    @NotEmpty
     private List<Long> productIds;
 }

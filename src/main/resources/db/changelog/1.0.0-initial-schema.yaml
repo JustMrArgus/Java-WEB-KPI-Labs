@@ -1,0 +1,175 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-sequences
+      author: rodina-lev
+      changes:
+        - createSequence:
+            sequenceName: categories_id_seq
+            startValue: 1
+            incrementBy: 50
+        - createSequence:
+            sequenceName: products_id_seq
+            startValue: 1
+            incrementBy: 50
+        - createSequence:
+            sequenceName: orders_id_seq
+            startValue: 1
+            incrementBy: 50
+
+  - changeSet:
+      id: 2-create-categories-table
+      author: rodina-lev
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(120)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(512)
+        - createIndex:
+            tableName: categories
+            indexName: idx_categories_name
+            columns:
+              - column:
+                  name: name
+
+  - changeSet:
+      id: 3-create-products-table
+      author: rodina-lev
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_name
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(512)
+              - column:
+                  name: price
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: VARCHAR(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sku
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: products
+            baseColumnNames: category_id
+            constraintName: fk_products_category
+            referencedTableName: categories
+            referencedColumnNames: id
+        - createIndex:
+            tableName: products
+            indexName: idx_products_category_id
+            columns:
+              - column:
+                  name: category_id
+
+  - changeSet:
+      id: 4-create-orders-table
+      author: rodina-lev
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_number
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 5-create-orders-products-table
+      author: rodina-lev
+      changes:
+        - createTable:
+            tableName: orders_products
+            columns:
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: orders_products
+            columnNames: order_id, product_id
+            constraintName: pk_orders_products
+        - addForeignKeyConstraint:
+            baseTableName: orders_products
+            baseColumnNames: order_id
+            constraintName: fk_order_products_order
+            referencedTableName: orders
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: orders_products
+            baseColumnNames: product_id
+            constraintName: fk_order_products_product
+            referencedTableName: products
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: orders_products
+            indexName: idx_orders_products_product
+            columns:
+              - column:
+                  name: product_id

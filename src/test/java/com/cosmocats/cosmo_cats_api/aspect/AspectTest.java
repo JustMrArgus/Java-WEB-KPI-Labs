@@ -4,7 +4,6 @@ import com.cosmocats.cosmo_cats_api.config.FeatureToggleProperties;
 import com.cosmocats.cosmo_cats_api.exception.FeatureNotAvailableException;
 import com.cosmocats.cosmo_cats_api.service.CosmoCatService;
 import com.cosmocats.cosmo_cats_api.service.FeatureToggleService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.framework.AopProxyUtils;
@@ -34,14 +33,10 @@ class FeatureToggleAspectTest {
     @Autowired
     private FeatureToggleProperties featureToggleProperties;
 
-    @BeforeEach
-    void setup() {
-        featureToggleProperties.getToggles().clear();
-    }
-
     @Test
     @DisplayName("getCosmoCats should succeed when cosmoCats feature is enabled")
     void getCosmoCats_whenFeatureEnabled_shouldReturnList() {
+        featureToggleProperties.getToggles().clear();
         FeatureToggleProperties.Toggle t = new FeatureToggleProperties.Toggle();
         t.setEnabled(true);
         featureToggleProperties.getToggles().put("cosmoCats", t);
@@ -59,6 +54,7 @@ class FeatureToggleAspectTest {
     @Test
     @DisplayName("getCosmoCats should throw FeatureNotAvailableException when cosmoCats feature is disabled")
     void getCosmoCats_whenFeatureDisabled_shouldThrow() {
+        featureToggleProperties.getToggles().clear();
         FeatureToggleProperties.Toggle t = new FeatureToggleProperties.Toggle();
         t.setEnabled(false);
         featureToggleProperties.getToggles().put("cosmoCats", t);
@@ -74,6 +70,7 @@ class FeatureToggleAspectTest {
     @Test
     @DisplayName("getKittyProducts should succeed when kittyProducts feature is enabled")
     void getKittyProducts_whenFeatureEnabled_shouldReturnList() {
+        featureToggleProperties.getToggles().clear();
         FeatureToggleProperties.Toggle t = new FeatureToggleProperties.Toggle();
         t.setEnabled(true);
         featureToggleProperties.getToggles().put("kittyProducts", t);
@@ -88,6 +85,7 @@ class FeatureToggleAspectTest {
     @Test
     @DisplayName("getKittyProducts should throw FeatureNotAvailableException when kittyProducts feature is disabled")
     void getKittyProducts_whenFeatureDisabled_shouldThrow() {
+        featureToggleProperties.getToggles().clear();
         FeatureToggleProperties.Toggle t = new FeatureToggleProperties.Toggle();
         t.setEnabled(false);
         featureToggleProperties.getToggles().put("kittyProducts", t);
