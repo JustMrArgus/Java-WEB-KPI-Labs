@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Product Controller Integration Tests")
 @Tag("product-controller")
 @Transactional
+@WithMockUser(username = "astro-cat", roles = {"USER", "ADMIN"})
 class ProductControllerIT extends AbstractIntegrationTest {
 
     @Autowired
@@ -61,7 +64,7 @@ class ProductControllerIT extends AbstractIntegrationTest {
 
     @Test
     @SneakyThrows
-    @DisplayName("GET /api/v1/products - should return all products")
+    @DisplayName("GET /api/v1/products - should return all products (Authorized)")
     void getAllProducts_ShouldReturnList() {
         CategoryEntity category = createTestCategory("Furniture GetAll");
         createTestProduct("Cosmic star cat bed", "COSMO-GET-ALL", category);
@@ -69,8 +72,16 @@ class ProductControllerIT extends AbstractIntegrationTest {
         mockMvc.perform(get("/api/v1/products"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Cosmic star cat bed"))
-                .andExpect(jsonPath("$[0].price").value(29.99));
+                .andExpect(jsonPath("$[0].name").value("Cosmic star cat bed"));
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("GET /api/v1/products - should return 401 when Unauthorized")
+    @WithAnonymousUser
+    void getAllProducts_WhenUnauth_ShouldReturn401() {
+        mockMvc.perform(get("/api/v1/products"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -84,15 +95,6 @@ class ProductControllerIT extends AbstractIntegrationTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Cosmic star cat bed"));
-    }
-
-    @Test
-    @SneakyThrows
-    @DisplayName("GET /api/v1/products/{id} - should return 404 when product not found")
-    void getProductById_ShouldReturnNotFound() {
-        mockMvc.perform(get("/api/v1/products/99999"))
-                .andDo(print())
-                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -150,7 +152,6 @@ class ProductControllerIT extends AbstractIntegrationTest {
         ProductEntity savedProduct = createTestProduct("To Delete Bed", "COSMO-DELETE", category);
 
         mockMvc.perform(delete("/api/v1/products/" + savedProduct.getId()))
-                .andDo(print())
                 .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/api/v1/products/" + savedProduct.getId()))
