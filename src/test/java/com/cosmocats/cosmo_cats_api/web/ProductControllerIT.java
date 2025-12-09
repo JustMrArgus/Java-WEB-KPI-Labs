@@ -157,4 +157,29 @@ class ProductControllerIT extends AbstractIntegrationTest {
         mockMvc.perform(get("/api/v1/products/" + savedProduct.getId()))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("DELETE product - should return 403 Forbidden for USER role")
+    @WithMockUser(username = "simple-cat", roles = {"USER"})
+    void deleteProduct_WhenUser_ShouldReturnForbidden() {
+        CategoryEntity category = createTestCategory("Furniture Forbidden");
+        ProductEntity savedProduct = createTestProduct("Protected Bed", "COSMO-PROTECT", category);
+
+        mockMvc.perform(delete("/api/v1/products/" + savedProduct.getId()))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("DELETE product - should return 204 for ADMIN role")
+    @WithMockUser(username = "admin-cat", roles = {"ADMIN"})
+    void deleteProduct_WhenAdmin_ShouldDelete() {
+        CategoryEntity category = createTestCategory("Furniture Admin");
+        ProductEntity savedProduct = createTestProduct("Admin Delete Bed", "COSMO-ADMIN-DEL", category);
+
+        mockMvc.perform(delete("/api/v1/products/" + savedProduct.getId()))
+                .andExpect(status().isNoContent()); // Очікуємо 204 (успіх)
+    }
 }

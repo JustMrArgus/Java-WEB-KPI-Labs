@@ -9,6 +9,7 @@ import com.cosmocats.cosmo_cats_api.repository.CategoryRepository;
 import com.cosmocats.cosmo_cats_api.repository.ProductRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -152,6 +153,7 @@ public class ProductServiceImplTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("Should delete the product when ID exists")
+    @WithMockUser(roles = "ADMIN")
     void testDeleteProductById_ShouldRemoveProduct_WhenIdExists() {
         CategoryEntity category = createTestCategory("Cat-To Be Deleted");
         Product productToDelete = productService.createProduct(createDummyProduct("To Be Deleted", category));
@@ -164,6 +166,7 @@ public class ProductServiceImplTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("Should not throw an exception when deleting a non-existent ID")
+    @WithMockUser(roles = "ADMIN")
     void testDeleteProductById_ShouldDoNothing_WhenIdDoesNotExist() {
         Long nonExistentId = 99L;
 

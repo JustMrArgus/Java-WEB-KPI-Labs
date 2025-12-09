@@ -13,6 +13,7 @@ import com.cosmocats.cosmo_cats_api.repository.ProductRepository;
 import com.cosmocats.cosmo_cats_api.repository.projection.ProductSalesProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,6 +75,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteProductById(Long id) {
         if (!productRepository.existsById(id)) {
             throw new ProductNotFoundException(id);
